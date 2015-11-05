@@ -51,3 +51,4 @@ the requests.
 - [ ] boil down code generation stuff
 - [ ] retrieving of xsd schemes not already in the WSDL
 - [ ] make the already working parts *nice* and *tested*
+- [ ] use structs with proper xml tags for parameters, not map[string]interface{} (for simpler use of attributes)
