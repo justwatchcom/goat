@@ -52,3 +52,58 @@ the requests.
 - [ ] retrieving of xsd schemes not already in the WSDL
 - [ ] make the already working parts *nice* and *tested*
 - [ ] use structs with proper xml tags for parameters, not map[string]interface{} (for simpler use of attributes)
+
+# Example
+
+```go
+    c := makeNewOAuthHTTPClient()
+
+    ws = goat.NewWebservice(c, map[string]interface{}{
+        "RequestHeader/clientCustomerId": "CLIENT_CUSTOMER_ID",
+        "RequestHeader/developerToken":   "DEVELOPER_TOKEN",
+        "RequestHeader/userAgent":        "a random header",
+        "RequestHeader/validateOnly":     true,
+        "RequestHeader/partialFailure":   false,
+    })
+
+    err := ws.AddServices("https://adwords.google.com/api/adwords/mcm/v201509/ManagedCustomerService?wsdl")
+    if err != nil {
+        panic(err)
+    }
+
+    resp := struct {
+        XMLName     xml.Name `xml:"getResponse"`
+        GetResponse struct {
+            XMLName         xml.Name `xml:"rval"`
+            TotalNumEntries int      `xml:"totalNumEntries"`
+            PageType        string   `xml:"Page.Type"`
+            Entries         []struct {
+                XMLName          xml.Name `xml:"entries"`
+                AccountLabels    string   `xml:"accountLabels"`
+                CanManageClients bool     `xml:"canManageClients"`
+                CompanyName      string   `xml:"companyName"`
+                CurrencyCode     string   `xml:"currencyCode"`
+                CustomerId       string   `xml:"customerId"`
+                DateTimeZone     string   `xml:"dateTimeZone"`
+                Name             string   `xml:"name"`
+                TestAccount      bool     `xml:"testAccount"`
+            } `xml:"entries"`
+        }
+    }{}
+    err = ws.Do("ManagedCustomerService", "get", &resp, map[string]interface{}{
+        "get/serviceSelector/fields": []string{
+            "AccountLabels",
+            "CanManageClients",
+            "CompanyName",
+            "CurrencyCode",
+            "CustomerId",
+            "DateTimeZone",
+            "Name",
+            "TestAccount",
+        },
+    })
+    if err != nil {
+        panic(err)
+    }
+    // work with resp
+```
