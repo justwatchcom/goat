@@ -43,10 +43,11 @@ have the structs. The wsdl and the xsd packages will take care about generating
 the requests.
 
 # Status
-[x] support for generating basic requests
-[x] some Adwords API Endpoints still work (for get Requests)
-[ ] attributes
-[ ] validation ("minOccurs" and "maxOccurs")
-[ ] boil down code generation stuff
-[ ] retrieving of xsd schemes not already in the WSDL
-[ ] make the already working parts *nice* and *tested*
+
+- [x] support for generating basic requests
+- [x] some Adwords API Endpoints still work (for get Requests)
+- [ ] attributes
+- [ ] validation ("minOccurs" and "maxOccurs")
+- [ ] boil down code generation stuff
+- [ ] retrieving of xsd schemes not already in the WSDL
+- [ ] make the already working parts *nice* and *tested*
