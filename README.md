@@ -36,6 +36,27 @@ the you just pass a dictionary with fields. Not so much code, and the library
 
 As long there is reflection in Go, this should be possible.
 
+## Personal motivation
+Back in university, we learned M68k Assembler (which I'm very happy about).
+There was a Windows program we used to execute the asm code with, but I wasn't happy
+about it. I wasn't happy about the UX and that we had to use Windows (I was a software-hippie
+back then ;-).
+
+So then I tried to create my own interpreter written in Java using GTK bindings.
+At the end, it helped me get to know Java, its standard library and Assembler.
+And since it was in a very early semester, it helped me a lot by solving coding tasks
+faster than the majority.
+
+But on the other hand, I didn't have something to replace that Windows program with.
+
+This project should also be something like the described one:
+
+- learn XML and XSD / WSDL (and SOAP)
+- make it easier to handle WSDLs in Go (for me)
+
+So even if this project does not work out at the end, it may help the one or the other
+to handle SOAP in Go a little bit more efficient.
+
 # Solution
 This Library is forked from [wsdl-go](https://code.google.com/p/wsdl-go/). In the
 future, it should take out a lot of stuff from the auto-generating stuff to only
