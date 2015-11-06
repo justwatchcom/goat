@@ -4,6 +4,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
+	"os"
 	"strings"
 
 	"github.com/justwatchcom/goat/xsd"
@@ -43,11 +44,17 @@ func (self *Definitions) UnmarshalXML(d *xml.Decoder, start xml.StartElement) (e
 	}
 
 	for _, attr := range start.Attr {
-		self.Aliases[attr.Name.Local] = attr.Value
+		if _, ok := self.Aliases[attr.Name.Local]; !ok {
+			self.Aliases[attr.Name.Local] = attr.Value
+		}
+
 		for k := range self.Types.Schemas {
-			self.Types.Schemas[k].Aliases[attr.Name.Local] = attr.Value
+			if _, ok := self.Types.Schemas[k].Aliases[attr.Name.Local]; !ok {
+				self.Types.Schemas[k].Aliases[attr.Name.Local] = attr.Value
+			}
 		}
 	}
+
 	return
 }
 
@@ -72,7 +79,7 @@ func (self *Definitions) WriteRequest(operation string, w io.Writer, headerParam
 	}
 
 	fmt.Fprint(w, xml.Header)
-	enc := xml.NewEncoder(w)
+	enc := xml.NewEncoder(io.MultiWriter(w, os.Stdout))
 	enc.Indent("", "  ")
 	defer func() {
 		if err == nil {

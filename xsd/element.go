@@ -38,11 +38,6 @@ func (self *Element) Encode(enc *xml.Encoder, sr SchemaRepository, ga GetAliaser
 		if self.Type != "" {
 			parts := strings.Split(self.Type, ":")
 			switch len(parts) {
-			case 1:
-				err = self.Encode(enc, sr, ga, params, append(path, self.Name)...)
-				if err != nil {
-					return
-				}
 			case 2:
 				var schema Schemaer
 				schema, err = sr.GetSchema(ga.GetAlias(parts[0]))

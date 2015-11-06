@@ -21,7 +21,7 @@ var mappings = []mapping{
 		format:    "%t",
 	},
 	{
-		xsdSchema: []string{"int"},
+		xsdSchema: []string{"int", "long"},
 		kinds:     []reflect.Kind{reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64, reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr},
 		format:    "%d",
 	},

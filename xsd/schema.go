@@ -1,6 +1,9 @@
 package xsd
 
-import "encoding/xml"
+import (
+	"encoding/xml"
+	"fmt"
+)
 
 type InnerSchema struct {
 	TargetNamespace    string        `xml:"targetNamespace,attr"`
@@ -40,26 +43,28 @@ func (self *Schema) GetAlias(alias string) (space string) {
 	return self.Aliases[alias]
 }
 
-func (self *Schema) EncodeElement(name string, enc *xml.Encoder, sr SchemaRepository, params map[string]interface{}, path ...string) (err error) {
-	var elem Element
-	for _, elem = range self.Elements {
+func (self *Schema) EncodeElement(name string, enc *xml.Encoder, sr SchemaRepository, params map[string]interface{}, path ...string) error {
+	for _, elem := range self.Elements {
 		if elem.Name == name {
-			err = elem.Encode(enc, sr, self, params, path...)
-			break
+			return elem.Encode(enc, sr, self, params, path...)
 		}
 	}
 
-	return
+	return fmt.Errorf("did not find element '%s'", name)
 }
 
-func (self *Schema) EncodeType(name string, enc *xml.Encoder, sr SchemaRepository, params map[string]interface{}, path ...string) (err error) {
-	var cmplx ComplexType
-	for _, cmplx = range self.ComplexTypes {
+func (self *Schema) EncodeType(name string, enc *xml.Encoder, sr SchemaRepository, params map[string]interface{}, path ...string) error {
+	for _, cmplx := range self.ComplexTypes {
 		if cmplx.Name == name {
-			err = cmplx.Encode(enc, sr, self, params, path...)
-			break
+			return cmplx.Encode(enc, sr, self, params, path...)
 		}
 	}
 
-	return
+	for _, smpl := range self.SimpleTypes {
+		if smpl.Name == name {
+			return smpl.Encode(enc, sr, self, params, path...)
+		}
+	}
+
+	return fmt.Errorf("did not find type '%s'", name)
 }

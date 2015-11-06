@@ -5,8 +5,11 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
+	"os"
 )
 
 type ResponseEnvelope struct {
@@ -34,8 +37,10 @@ func (self *Webservice) Do(service, method string, res interface{}, params map[s
 		return
 	}
 
+	log.Println(buf.String())
+
 	var resp *http.Response
-	resp, err = self.Client.Post(s.Service.Port.Address.Location, "application/soap+xml", buf)
+	resp, err = self.Client.Post(s.Service.Port.Address.Location, "application/soap+xml", io.TeeReader(buf, os.Stdout))
 	if err != nil {
 		return
 	}
