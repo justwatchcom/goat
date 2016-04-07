@@ -58,7 +58,18 @@ func (self *Definitions) UnmarshalXML(d *xml.Decoder, start xml.StartElement) (e
 	return
 }
 
+func copyMap(src map[string]interface{}) map[string]interface{} {
+	dst := map[string]interface{}{}
+	for k, v := range src {
+		dst[k] = v
+	}
+	return dst
+}
+
 func (self *Definitions) WriteRequest(operation string, w io.Writer, headerParams, bodyParams map[string]interface{}) (err error) {
+	headerParams = copyMap(headerParams)
+	bodyParams = copyMap(bodyParams)
+
 	var bndOp BindingOperation
 	var ptOp PortTypeOperation
 	bndOp, ptOp, err = self.getOperations(operation)
