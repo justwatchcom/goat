@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 )
@@ -24,23 +23,26 @@ type ResponseEnvelope struct {
 	}
 }
 
-func (self *Webservice) Do(service, method string, res interface{}, params map[string]interface{}) (err error) {
+func (self *Webservice) NewRequest(service, method string, params map[string]interface{}, buf io.Writer) (err error) {
 	s := self.services[service]
 	if s == nil {
 		err = fmt.Errorf("no such service '%s'", service)
 		return
 	}
 
-	buf := new(bytes.Buffer)
 	err = s.WriteRequest(method, buf, self.header, params)
-	if err != nil {
+	return
+}
+
+func (self *Webservice) SendBuffer(service string, res interface{}, buf io.Reader) (err error) {
+	s := self.services[service]
+	if s == nil {
+		err = fmt.Errorf("no such service '%s'", service)
 		return
 	}
 
-	log.Println(buf.String())
-
 	var resp *http.Response
-	resp, err = self.Client.Post(s.Service.Port.Address.Location, "application/soap+xml", io.TeeReader(buf, os.Stdout))
+	resp, err = self.Client.Post(s.Service.Port.Address.Location, "application/soap+xml", buf)
 	if err != nil {
 		return
 	}
@@ -58,11 +60,22 @@ func (self *Webservice) Do(service, method string, res interface{}, params map[s
 	}
 
 	e := new(ResponseEnvelope)
-	err = xml.NewDecoder(resp.Body).Decode(e)
+	err = xml.NewDecoder(io.TeeReader(resp.Body, os.Stdout)).Decode(e)
 	if err != nil {
 		return
 	}
 
 	err = xml.Unmarshal(e.Body.Data, res)
+	return
+}
+
+func (self *Webservice) Do(service, method string, res interface{}, params map[string]interface{}) (err error) {
+	buf := new(bytes.Buffer)
+	err = self.NewRequest(service, method, params, buf)
+	if err != nil {
+		return
+	}
+
+	err = self.SendBuffer(service, res, buf)
 	return
 }
